@@ -32,14 +32,25 @@ echo -e "${NC}"
 # Verificar si se proporcionó nombre del proyecto
 if [ -z "$1" ]; then
     echo -e "${RED}❌ Error: Debes proporcionar un nombre para el proyecto${NC}"
-    echo -e "${YELLOW}Uso: saas-factory <nombre-proyecto> [db-name]${NC}"
+    echo -e "${YELLOW}Uso: saas-factory <nombre-proyecto> [db-name] [--dns]${NC}"
     echo -e "${CYAN}Ejemplo: saas-factory app-gemini gemini_db${NC}"
+    echo -e "${CYAN}Con DNS:  saas-factory app-gemini gemini_db --dns${NC}"
     exit 1
 fi
 
 PROJECT_NAME=$1
 DB_NAME=${2:-${PROJECT_NAME//-/_}_db}  # Reemplazar guiones por guiones bajos
+CREATE_DNS=false
+
+# Verificar si se pasó la flag --dns
+for arg in "$@"; do
+    if [ "$arg" == "--dns" ]; then
+        CREATE_DNS=true
+    fi
+done
+
 PROJECT_DIR="$PWD/$PROJECT_NAME"
+SUBDOMAIN="${PROJECT_NAME}"
 
 # Verificar si el directorio ya existe
 if [ -d "$PROJECT_DIR" ]; then
@@ -49,6 +60,9 @@ fi
 
 echo -e "${CYAN}📦 Creando proyecto: ${GREEN}$PROJECT_NAME${NC}"
 echo -e "${CYAN}🗄️  Base de datos: ${GREEN}$DB_NAME${NC}"
+if [ "$CREATE_DNS" = true ]; then
+    echo -e "${CYAN}🌐 DNS: ${GREEN}${SUBDOMAIN}.emanuel-server.com${NC}"
+fi
 echo ""
 
 # Paso 1: Crear proyecto Next.js
@@ -1078,6 +1092,29 @@ Stack:
 echo -e "${CYAN}Generando Prisma Client...${NC}"
 npx prisma generate
 
+# Crear subdominio DNS si se solicitó
+if [ "$CREATE_DNS" = true ]; then
+    echo ""
+    echo -e "${BLUE}[Bonus]${NC} Configurando DNS en Cloudflare..."
+
+    # Verificar que existan las credenciales
+    if [ -z "$CLOUDFLARE_API_TOKEN" ] && [ -z "$CLOUDFLARE_API_KEY" ]; then
+        echo -e "${YELLOW}⚠️  Variables de Cloudflare no configuradas. Saltando DNS...${NC}"
+        echo -e "${CYAN}Para configurar DNS después, ve a: docs/cloudflare_dns_guide.md${NC}"
+    else
+        # Obtener IP del servidor
+        SERVER_IP=$(hostname -I | awk '{print $1}')
+
+        # Usar script de Cloudflare DNS
+        SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+        if [ -f "$SCRIPT_DIR/scripts/cloudflare-dns.sh" ]; then
+            "$SCRIPT_DIR/scripts/cloudflare-dns.sh" create "$SUBDOMAIN" "$SERVER_IP"
+        else
+            echo -e "${YELLOW}⚠️  Script de Cloudflare DNS no encontrado${NC}"
+        fi
+    fi
+fi
+
 # Mensaje de éxito
 echo ""
 echo -e "${GREEN}╔═══════════════════════════════════════════════════════╗${NC}"
@@ -1088,6 +1125,9 @@ echo -e "${GREEN}╚════════════════════
 echo ""
 echo -e "${CYAN}📁 Ubicación:${NC} $PROJECT_DIR"
 echo -e "${CYAN}🗄️  Base de datos:${NC} $DB_NAME"
+if [ "$CREATE_DNS" = true ] && [ -n "$SERVER_IP" ]; then
+    echo -e "${CYAN}🌐 DNS:${NC} https://${SUBDOMAIN}.emanuel-server.com"
+fi
 echo ""
 echo -e "${YELLOW}📋 Próximos pasos:${NC}"
 echo -e "  ${BLUE}1.${NC} ${CYAN}cd $PROJECT_NAME${NC}"

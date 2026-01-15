@@ -20,6 +20,10 @@ source ~/.bashrc
 
 # Usar
 saas-factory mi-proyecto
+
+# Con subdominio automático (requiere configuración de Cloudflare)
+saas-factory mi-proyecto mi_proyecto_db --dns
+# Crea: mi-proyecto.emanuel-server.com
 ```
 
 ## 🎯 ¿Qué genera?
@@ -34,6 +38,7 @@ En **2 minutos** genera un proyecto completo con:
 - ✅ **Radix UI** componentes accesibles
 - ✅ **Zod** validación de schemas
 - ✅ **Estructura optimizada** para desarrollo con IA
+- ✅ **Cloudflare DNS** creación automática de subdominios (opcional)
 
 ### Stack Completo
 
@@ -181,6 +186,7 @@ antigravity .
 - **[saas_factory_ejemplo_uso.md](docs/saas_factory_ejemplo_uso.md)** - Caso de uso real con IA
 - **[saas_factory_cheatsheet.md](docs/saas_factory_cheatsheet.md)** - Comandos de referencia
 - **[supabase_vs_postgresql_comparacion.md](docs/supabase_vs_postgresql_comparacion.md)** - Comparación técnica
+- **[cloudflare_dns_guide.md](docs/cloudflare_dns_guide.md)** - Guía de Cloudflare DNS
 
 ## 🛠️ Comandos Útiles
 
@@ -199,6 +205,11 @@ npm run build
 
 # Desplegar a Vercel
 vercel --prod
+
+# Gestión de DNS (Cloudflare)
+./scripts/cloudflare-dns.sh create mi-app 192.168.1.100
+./scripts/cloudflare-dns.sh list
+./scripts/cloudflare-dns.sh delete mi-app
 ```
 
 ## 🔧 Requisitos
@@ -260,6 +271,39 @@ saas-factory client-portal
 - ✅ XSS protection via React
 - ✅ SQL injection protection via Prisma
 - ✅ Environment variables para secretos
+
+## 🌐 Cloudflare DNS (Opcional)
+
+SaaS Factory puede crear automáticamente subdominios en **emanuel-server.com** para cada proyecto.
+
+### Configuración Rápida
+
+```bash
+# 1. Configurar credenciales de Cloudflare
+export CLOUDFLARE_API_TOKEN="tu_api_token"
+export CLOUDFLARE_ZONE_ID="tu_zone_id"
+export CLOUDFLARE_DOMAIN="emanuel-server.com"
+
+# 2. Crear proyecto con DNS automático
+saas-factory mi-app mi_app_db --dns
+
+# Resultado: mi-app.emanuel-server.com creado automáticamente
+```
+
+### Obtener Credenciales
+
+1. Ve a: https://dash.cloudflare.com/profile/api-tokens
+2. Crea un API Token con permiso **"Edit zone DNS"**
+3. Obtén el Zone ID del dashboard de emanuel-server.com
+4. Configura las variables en `~/.bashrc`:
+
+```bash
+echo 'export CLOUDFLARE_API_TOKEN="tu_token"' >> ~/.bashrc
+echo 'export CLOUDFLARE_ZONE_ID="tu_zone_id"' >> ~/.bashrc
+source ~/.bashrc
+```
+
+Ver guía completa: **[cloudflare_dns_guide.md](docs/cloudflare_dns_guide.md)**
 
 ## 🚀 Deployment
 

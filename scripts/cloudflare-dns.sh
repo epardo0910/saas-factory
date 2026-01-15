@@ -71,25 +71,25 @@ cf_api_call() {
     if [ -n "$CLOUDFLARE_API_TOKEN" ]; then
         # Usar API Token
         if [ -n "$data" ]; then
-            curl -s -X "$method" "https://api.cloudflare.com/v4/zones/${CLOUDFLARE_ZONE_ID}${endpoint}" \
+            curl -s -X "$method" "https://api.cloudflare.com/client/v4/zones/${CLOUDFLARE_ZONE_ID}${endpoint}" \
                 -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
                 -H "Content-Type: application/json" \
                 -d "$data"
         else
-            curl -s -X "$method" "https://api.cloudflare.com/v4/zones/${CLOUDFLARE_ZONE_ID}${endpoint}" \
+            curl -s -X "$method" "https://api.cloudflare.com/client/v4/zones/${CLOUDFLARE_ZONE_ID}${endpoint}" \
                 -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
                 -H "Content-Type: application/json"
         fi
     else
         # Usar API Key
         if [ -n "$data" ]; then
-            curl -s -X "$method" "https://api.cloudflare.com/v4/zones/${CLOUDFLARE_ZONE_ID}${endpoint}" \
+            curl -s -X "$method" "https://api.cloudflare.com/client/v4/zones/${CLOUDFLARE_ZONE_ID}${endpoint}" \
                 -H "X-Auth-Email: ${CLOUDFLARE_EMAIL}" \
                 -H "X-Auth-Key: ${CLOUDFLARE_API_KEY}" \
                 -H "Content-Type: application/json" \
                 -d "$data"
         else
-            curl -s -X "$method" "https://api.cloudflare.com/v4/zones/${CLOUDFLARE_ZONE_ID}${endpoint}" \
+            curl -s -X "$method" "https://api.cloudflare.com/client/v4/zones/${CLOUDFLARE_ZONE_ID}${endpoint}" \
                 -H "X-Auth-Email: ${CLOUDFLARE_EMAIL}" \
                 -H "X-Auth-Key: ${CLOUDFLARE_API_KEY}" \
                 -H "Content-Type: application/json"

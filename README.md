@@ -10,7 +10,7 @@ Inspirado en el paradigma de desarrollo agéntico presentado en videos sobre con
 
 ```bash
 # Instalar
-git clone https://github.com/tu-usuario/saas-factory.git
+git clone https://github.com/epardo0910/saas-factory.git
 cd saas-factory
 chmod +x saas-factory.sh
 
@@ -175,12 +175,12 @@ antigravity .
 
 ## 📚 Documentación
 
-- **[SAAS_FACTORY_INDEX.md](SAAS_FACTORY_INDEX.md)** - Índice maestro
-- **[SAAS_FACTORY_QUICKSTART.md](SAAS_FACTORY_QUICKSTART.md)** - Guía rápida de 5 minutos
-- **[saas_factory_guia.md](saas_factory_guia.md)** - Guía completa
-- **[saas_factory_ejemplo_uso.md](saas_factory_ejemplo_uso.md)** - Caso de uso real con IA
-- **[saas_factory_cheatsheet.md](saas_factory_cheatsheet.md)** - Comandos de referencia
-- **[supabase_vs_postgresql_comparacion.md](supabase_vs_postgresql_comparacion.md)** - Comparación técnica
+- **[SAAS_FACTORY_INDEX.md](docs/SAAS_FACTORY_INDEX.md)** - Índice maestro
+- **[SAAS_FACTORY_QUICKSTART.md](docs/SAAS_FACTORY_QUICKSTART.md)** - Guía rápida de 5 minutos
+- **[saas_factory_guia.md](docs/saas_factory_guia.md)** - Guía completa
+- **[saas_factory_ejemplo_uso.md](docs/saas_factory_ejemplo_uso.md)** - Caso de uso real con IA
+- **[saas_factory_cheatsheet.md](docs/saas_factory_cheatsheet.md)** - Comandos de referencia
+- **[supabase_vs_postgresql_comparacion.md](docs/supabase_vs_postgresql_comparacion.md)** - Comparación técnica
 
 ## 🛠️ Comandos Útiles
 
@@ -212,7 +212,7 @@ vercel --prod
 ### Opción 1: Clonar repositorio
 
 ```bash
-git clone https://github.com/tu-usuario/saas-factory.git
+git clone https://github.com/epardo0910/saas-factory.git
 cd saas-factory
 chmod +x saas-factory.sh
 
@@ -224,7 +224,7 @@ source ~/.bashrc
 ### Opción 2: Download directo
 
 ```bash
-curl -O https://raw.githubusercontent.com/tu-usuario/saas-factory/main/saas-factory.sh
+curl -O https://raw.githubusercontent.com/epardo0910/saas-factory/main/saas-factory.sh
 chmod +x saas-factory.sh
 
 # Mover a /usr/local/bin para uso global
@@ -321,9 +321,9 @@ MIT License - ver [LICENSE](LICENSE) para más detalles
 
 ## 📞 Soporte
 
-- 📖 [Documentación completa](SAAS_FACTORY_INDEX.md)
-- 💬 [Discussions](https://github.com/tu-usuario/saas-factory/discussions)
-- 🐛 [Issues](https://github.com/tu-usuario/saas-factory/issues)
+- 📖 [Documentación completa](docs/SAAS_FACTORY_INDEX.md)
+- 💬 [Discussions](https://github.com/epardo0910/saas-factory/discussions)
+- 🐛 [Issues](https://github.com/epardo0910/saas-factory/issues)
 
 ---
 

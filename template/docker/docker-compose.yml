@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  app:
+    container_name: app-client # Se recomienda cambiar esto
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/app_db
+      - NEXTAUTH_SECRET=changeme
+      - NEXTAUTH_URL=http://localhost:3000
+    depends_on:
+      - db
+
+  db:
+    container_name: app-db
+    image: postgres:15-alpine
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: app_db
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+volumes:
+  db_data:

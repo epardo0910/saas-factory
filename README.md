@@ -1,10 +1,12 @@
-# 🏭 SaaS Factory
+# 🏭 SaaS Factory v2.0
 
 > Build Software, Not Just Automations
 
 **SaaS Factory** es un generador CLI que crea aplicaciones SaaS full-stack completas en minutos, diseñado para desarrollo agéntico con IA (Claude, Gemini Antigravity, etc.).
 
 Inspirado en el paradigma de desarrollo agéntico presentado en videos sobre construcción de software con IA, pero optimizado para usar **PostgreSQL directo** en lugar de servicios cloud, dándote control total de tu infraestructura.
+
+**✨ Nuevo en v2.0:** Flujo optimizado con validación de flags, MCP por defecto, y DB migrada automáticamente antes del commit inicial.
 
 ## ⚡ Quick Start
 
@@ -21,10 +23,26 @@ source ~/.bashrc
 # Usar
 saas-factory mi-proyecto
 
-# Con subdominio automático (requiere configuración de Cloudflare)
+# Con subdominio automático (Cloudflare DNS)
 saas-factory mi-proyecto mi_proyecto_db --dns
-# Crea: mi-proyecto.emanuel-server.com
+
+# Con creación automática de base de datos (PostgreSQL)
+saas-factory mi-proyecto mi_proyecto_db --create-db
+
+# Con Cloudflare Tunnel (más seguro que DNS directo)
+saas-factory mi-proyecto mi_proyecto_db --create-db --tunnel
+
+# Con tests + CI/CD
+saas-factory mi-proyecto mi_proyecto_db --create-db --with-tests
+
+# Deploy automático completo (PM2 + Caddy + SSL)
+saas-factory mi-proyecto mi_proyecto_db --create-db --tunnel --deploy
+
+# Sin MCP servers (si no usas Claude/IA)
+saas-factory mi-proyecto mi_proyecto_db --no-mcp
 ```
+
+**📖 ¿Primera vez?** Lee la **[Guía Quickstart](QUICKSTART.md)** - De cero a producción en 10 minutos.
 
 ## 🎯 ¿Qué genera?
 
@@ -38,7 +56,11 @@ En **2 minutos** genera un proyecto completo con:
 - ✅ **Radix UI** componentes accesibles
 - ✅ **Zod** validación de schemas
 - ✅ **Estructura optimizada** para desarrollo con IA
-- ✅ **Cloudflare DNS** creación automática de subdominios (opcional)
+- ✅ **Cloudflare DNS/Tunnel** creación automática de subdominios (opcional)
+- ✅ **MCP Servers** 8 servidores configurados por defecto (filesystem, postgres, git, github, n8n, etc.)
+- ✅ **Testing** Vitest + Playwright + CI/CD (opcional con --with-tests)
+- ✅ **Auto-deploy** PM2 + Caddy + SSL (opcional con --deploy)
+- ✅ **Flujo optimizado v2.0** DB migrada antes de commit, MCP en commit inicial
 
 ### Stack Completo
 
@@ -85,38 +107,68 @@ El schema de Prisma ya incluye:
 
 ```bash
 # Sintaxis
-saas-factory <nombre-proyecto> [nombre-db]
+saas-factory <nombre-proyecto> [nombre-db] [flags]
 
-# Ejemplos
-saas-factory mi-app                    # DB: mi_app_db
-saas-factory crm-acme acme_crm_db     # DB: acme_crm_db
+# Ejemplos básicos
+saas-factory mi-app                    # DB: mi_app_db (MCP incluido)
+saas-factory crm-acme acme_crm_db     # DB: acme_crm_db (MCP incluido)
+
+# Con auto-creación de DB (recomendado)
+saas-factory mi-app mi_app_db --create-db
+
+# Completo: DB + Tunnel + Deploy
+saas-factory mi-app mi_app_db --create-db --tunnel --deploy
 ```
 
-### 2. Configurar Base de Datos
+### 2. Flags Disponibles (v2.0)
+
+| Flag | Descripción |
+|------|-------------|
+| `--create-db` | Crea DB PostgreSQL automáticamente |
+| `--dns` | Crea registro DNS A en Cloudflare |
+| `--tunnel` | Configura Cloudflare Tunnel (más seguro) |
+| `--deploy` | Deploy automático (PM2 + Caddy + SSL) |
+| `--with-tests` | Configura Vitest + Playwright + CI/CD |
+| `--no-mcp` | Desactiva MCP servers (por defecto están activos) |
+
+**⚠️ Validaciones:**
+- ❌ No puedes usar `--dns` y `--tunnel` juntos
+- ⚠️  `--deploy` funciona mejor con `--create-db`
+
+### 3. Flujo Optimizado v2.0
+
+Cuando usas `--create-db`, el flujo es completamente automático:
+
+```
+[1-5]  Crear proyecto Next.js + deps + estructura
+[6]    Crear base de datos PostgreSQL
+[7]    Ejecutar migración inicial de Prisma
+[8]    Configurar MCP (8 servers)
+[9]    Configurar tests (si --with-tests)
+[10]   Git commit (incluye TODO lo anterior)
+```
+
+**Resultado:**
+- ✅ DB creada y migrada
+- ✅ MCP configurado en commit inicial
+- ✅ Tests configurados (si solicitaste)
+- ✅ Listo para: `cd mi-app && npm run dev`
+
+### 4. Desarrollo
 
 ```bash
+# Con --create-db (recomendado)
 cd mi-app
+npm run dev  # ¡Ya funciona! DB ya está migrada
 
-# Crear base de datos PostgreSQL
+# Sin --create-db (manual)
+cd mi-app
 createdb mi_app_db
-
-# Ejecutar migraciones de Prisma
 npx prisma migrate dev --name init
-
-# Ver base de datos (GUI en localhost:5555)
-npx prisma studio
-```
-
-### 3. Desarrollo
-
-```bash
-# Iniciar servidor de desarrollo
 npm run dev
-# → http://localhost:3000
 
-# En otra terminal: Ver base de datos
-npx prisma studio
-# → http://localhost:5555
+# Ver base de datos (GUI)
+npx prisma studio  # → http://localhost:5555
 ```
 
 ## 🤖 Uso con Editores Agénticos (IA)
@@ -180,13 +232,20 @@ antigravity .
 
 ## 📚 Documentación
 
-- **[SAAS_FACTORY_INDEX.md](docs/SAAS_FACTORY_INDEX.md)** - Índice maestro
-- **[SAAS_FACTORY_QUICKSTART.md](docs/SAAS_FACTORY_QUICKSTART.md)** - Guía rápida de 5 minutos
-- **[saas_factory_guia.md](docs/saas_factory_guia.md)** - Guía completa
-- **[saas_factory_ejemplo_uso.md](docs/saas_factory_ejemplo_uso.md)** - Caso de uso real con IA
-- **[saas_factory_cheatsheet.md](docs/saas_factory_cheatsheet.md)** - Comandos de referencia
+### Comenzar
+- **[QUICKSTART.md](QUICKSTART.md)** - De cero a producción en 10 minutos 🚀
+- **[CHANGELOG.md](CHANGELOG.md)** - Historial de cambios v2.0
+
+### Configuración y Deploy
+- **[CADDY_CONFIG.md](CADDY_CONFIG.md)** - 🔐 Reverse proxy y SSL automático (usa con --deploy)
+- **[mcp_configuration.md](docs/mcp_configuration.md)** - 🔌 8 MCP servers configurados por defecto
+- **[postgresql_automatizado.md](docs/postgresql_automatizado.md)** - Base de datos automática (--create-db)
+- **[cloudflare_dns_guide.md](docs/cloudflare_dns_guide.md)** - DNS/Tunnel automático
+
+### Referencias
+- **[saas_factory_cheatsheet.md](docs/saas_factory_cheatsheet.md)** - Comandos rápidos v2.0
 - **[supabase_vs_postgresql_comparacion.md](docs/supabase_vs_postgresql_comparacion.md)** - Comparación técnica
-- **[cloudflare_dns_guide.md](docs/cloudflare_dns_guide.md)** - Guía de Cloudflare DNS
+- **[SAAS_FACTORY_INDEX.md](docs/SAAS_FACTORY_INDEX.md)** - Índice completo
 
 ## 🛠️ Comandos Útiles
 
@@ -307,28 +366,59 @@ Ver guía completa: **[cloudflare_dns_guide.md](docs/cloudflare_dns_guide.md)**
 
 ## 🚀 Deployment
 
-### Vercel (Recomendado)
+### Tu Propio Servidor (Recomendado) ✅
+
+Si tienes tu propio servidor (como este caso), es la mejor opción:
+
+**Ventajas:**
+- ✅ Control total de infraestructura
+- ✅ PostgreSQL ya instalado localmente
+- ✅ Sin costos adicionales de hosting
+- ✅ Mejor performance (sin latencia de red)
+- ✅ Cloudflare DNS integrado (subdominios automáticos)
 
 ```bash
-# En tu proyecto generado
+# 1. Build del proyecto
+npm run build
+
+# 2. Iniciar con PM2 (auto-restart)
+pm2 start npm --name "mi-app" -- start
+pm2 save
+pm2 startup  # Auto-start en boot
+
+# 3. Configurar proxy reverso (Caddy recomendado)
+sudo nano /etc/caddy/Caddyfile
+```
+
+```caddyfile
+mi-app.emanuel-server.com {
+    reverse_proxy localhost:3000
+    encode gzip
+}
+```
+
+```bash
+sudo systemctl reload caddy
+# ✅ SSL automático con Let's Encrypt
+# ✅ Listo en https://mi-app.emanuel-server.com
+```
+
+### Vercel (Alternativa para proyectos específicos)
+
+Solo si necesitas deploy externo:
+
+```bash
 npm i -g vercel
-vercel
-
-# Configurar variables de entorno
-vercel env add DATABASE_URL
-vercel env add NEXTAUTH_SECRET
-vercel env add NEXTAUTH_URL
-
-# Deploy a producción
 vercel --prod
 ```
 
+**Nota:** Necesitarás PostgreSQL accesible desde internet (Railway, Neon, etc.)
+
 ### Otras Plataformas
 
-- **Railway** - Deploy PostgreSQL + Next.js
+- **Railway** - PostgreSQL + Deploy
 - **DigitalOcean App Platform**
 - **AWS Amplify**
-- **Tu propio servidor VPS**
 
 ## 🤝 Contribuir
 
